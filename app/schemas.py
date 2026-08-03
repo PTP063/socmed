@@ -1,44 +1,44 @@
-from dataclasses import Field
-
-
 from datetime import datetime
 from typing import Annotated, Optional
-from pydantic import BaseModel, EmailStr, Field, conint
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 class UserOut(BaseModel):
     id: int
     email: EmailStr
     created_at: datetime
 
-    class Config:
-        orm_mode=True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserCreate(BaseModel):
     email: EmailStr
-    password: Annotated[str, Field(max_length=200)]
+    password: str
+
 class PostBase(BaseModel):
     title: str
     content: str
     published: bool = True
-    user:UserOut
 
 class PostCreate(PostBase):
     pass
 
-class Post(BaseModel):
-    title: str
+class PostOut(PostBase):
     id: int
+    title: str
     content: str
-    published: bool = True
+    published: bool
     created_at: datetime
+    owner_id: int
+    owner: UserOut
+    votes_count: int = 0
+    user_voted: bool = False
 
-    class Config:
-        orm_mode=True
+    model_config = ConfigDict(from_attributes=True)
 
+class PostDetail(BaseModel):
+    Post: PostOut
+    votes: int
 
-
-
-
+    model_config = ConfigDict(from_attributes=True)
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -53,4 +53,4 @@ class TokenData(BaseModel):
 
 class Vote(BaseModel):
     post_id: int
-    dir: conint(ge=0, le=1)
+    dir: int = Field(ge=0, le=1)
