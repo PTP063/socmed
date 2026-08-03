@@ -1,2 +1,2 @@
 # socmed
-a social media website built using primarily fastapi
+a social media website built using primarily fastapi , Postgres 
